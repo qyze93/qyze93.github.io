@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Büyük Ödül Sitesi</title>
+    <style>
+        body { 
+            margin: 0; background: #000; color: white; 
+            font-family: 'Arial', sans-serif; height: 100vh; 
+            overflow: hidden; display: flex; justify-content: center; align-items: center; 
+        }
+        #box { text-align: center; width: 100%; position: relative; z-index: 10; }
+        #mesaj { font-size: 22px; margin-bottom: 20px; font-weight: bold; color: #0f0; min-height: 50px; }
+        
+        #btn { 
+            padding: 15px 30px; font-size: 18px; cursor: pointer; 
+            background: #222; color: #fff; border: 2px solid #0f0; 
+            border-radius: 10px; font-weight: bold;
+            touch-action: none; /* Mobilde kaydırmayı engeller */
+        }
+
+        /* Korkunç Mod Efekti */
+        .scary { background: #600 !important; animation: shake 0.1s infinite !important; }
+        @keyframes shake {
+            0% { transform: translate(3px, 3px); }
+            50% { transform: translate(-3px, -3px); }
+            100% { transform: translate(3px, -3px); }
+        }
+
+        /* Final Ekranı */
+        #final { 
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; background: black; 
+            z-index: 9999; overflow: hidden; font-size: 30px; 
+        }
+        #kandirildin { 
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); color: red; 
+            font-size: 50px; font-weight: bold; background: white; 
+            padding: 20px; border: 5px solid red; z-index: 10000; 
+            width: 80%; text-align: center; box-shadow: 0 0 30px red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="box">
+    <div id="mesaj">Ödülü kazanmak için BAŞLA butonuna bas!</div>
+    <button id="btn" onclick="tikla()">BAŞLA</button>
+</div>
+
+<div id="final">
+    <div id="emoji-wall"></div>
+    <div id="kandirildin">KANDIRILDIN!<br>🖕🏿🖕🏿🖕🏿</div>
+</div>
+
+<script>
+    let sira = 0;
+    let mod = "normal"; // normal, korkunc, son
+    const btn = document.getElementById('btn');
+    const mesaj = document.getElementById('mesaj');
+
+    const laflar = [
+        "Hadi bakalım, bir daha bas.",
+        "Daha basmayı beceremiyorsun!",
+        "Cidden sakarsın, yakala şunu.",
+        "Beceriksiz misin evladım?",
+        "Hahaha! Çok yavaşsın!",
+        "Tıklasana? Korkuyor musun?"
+    ];
+
+    function isinla() {
+        const x = Math.random() * (window.innerWidth - btn.clientWidth - 20);
+        const y = Math.random() * (window.innerHeight - btn.clientHeight - 20);
+        btn.style.position = 'fixed';
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
+    }
+
+    function tikla() {
+        if (mod === "normal") {
+            if (sira < laflar.length) {
+                mesaj.innerText = laflar[sira];
+                isinla();
+                sira++;
+            } else {
+                // KORKUNÇ MODA GEÇİŞ
+                mod = "korkunc";
+                document.body.classList.add('scary');
+                mesaj.innerText = "BU BİR HATAYDI...";
+                mesaj.style.color = "yellow";
+                btn.innerText = "YAKALA BENİ!";
+                btn.style.background = "red";
+                isinla();
+            }
+        } else if (mod === "korkunc") {
+            // Bir şekilde yakalarsa (şans eseri basarsa)
+            mod = "son";
+            document.body.classList.remove('scary');
+            mesaj.innerText = "Tamam be pes ettim... Al hadi ödülünü, SON KEZ BAS!";
+            mesaj.style.color = "#0f0";
+            btn.style.position = "relative";
+            btn.style.left = "0";
+            btn.style.top = "0";
+            btn.innerText = "ÖDÜLÜ AL";
+            btn.style.background = "#222";
+        } else {
+            // FİNAL
+            document.getElementById('box').style.display = 'none';
+            document.getElementById('final').style.display = 'block';
+            let e = "";
+            for(let i=0; i<800; i++) { e += "🖕🏿"; }
+            document.getElementById('emoji-wall').innerText = e;
+        }
+    }
+
+    // Fare veya dokunma gelince kaçma (Sadece korkunç modda)
+    const kac = () => { if(mod === "korkunc") isinla(); };
+    btn.addEventListener('mouseover', kac);
+    btn.addEventListener('touchstart', (e) => { 
+        if(mod === "korkunc") { e.preventDefault(); kac(); } 
+    });
+</script>
+
+</body>
+</html>
