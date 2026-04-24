@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Büyük Ödül!</title>
+    <style>
+        body { 
+            margin: 0; background: #000; color: white; 
+            font-family: 'Arial', sans-serif; height: 100vh; 
+            overflow: hidden; display: flex; justify-content: center; align-items: center; 
+        }
+        #box { text-align: center; width: 100%; position: relative; z-index: 10; }
+        #mesaj { font-size: 20px; margin-bottom: 30px; font-weight: bold; color: #ff00ff; min-height: 60px; padding: 0 10px; }
+        
+        #btn { 
+            width: 80px; height: 80px; border-radius: 50%; /* YUVARLAK BUTON */
+            font-size: 14px; cursor: pointer; 
+            background: #00f2ff; color: #000; border: none; 
+            font-weight: bold; position: relative; 
+            box-shadow: 0 0 15px #00f2ff;
+            touch-action: none; transition: background 0.2s;
+        }
+
+        /* Korkunç Titreme */
+        .scary-bg { background: #300 !important; animation: shake 0.1s infinite; }
+        @keyframes shake {
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, -2px); }
+            100% { transform: translate(2px, -2px); }
+        }
+
+        /* Final Ekranı */
+        #final { 
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; background: black; 
+            z-index: 9999; overflow: hidden; font-size: 30px; 
+        }
+        #kandirildin { 
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); color: red; 
+            font-size: 50px; font-weight: bold; background: white; 
+            padding: 20px; border: 5px solid red; z-index: 10000; 
+            width: 80%; text-align: center; box-shadow: 0 0 30px red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="box">
+    <div id="mesaj">Ödülü kazanmak için BAŞLA!</div>
+    <button id="btn" onclick="tikla()">BAŞLA</button>
+</div>
+
+<div id="final">
+    <div id="emoji-wall"></div>
+    <div id="kandirildin">KANDIRILDIN!<br>🖕🏿🖕🏿🖕🏿</div>
+</div>
+
+<script>
+    let sira = 0;
+    let basariliBasma = 0;
+    let mod = "normal"; // normal, kayma, son
+    let hareketInterval;
+    const btn = document.getElementById('btn');
+    const mesaj = document.getElementById('mesaj');
+
+    const asagilayiciYazilar = [
+        "Bas hadi, ne bekliyorsun?",
+        "Cidden bu kadar yavaş mısın?",
+        "Tıklamayı bile beceremiyorsun!",
+        "Sakarsın işte kabul et.",
+        "Beceriksiz herif, yakalayamadın mı?",
+        "Gözün mü görmüyor yoksa elin mi tutmuyor?",
+        "Hahahaha! Rezilsin cidden.",
+        "IQ seviyen butona basmaya yetmiyor mu?",
+        "Sana ödül değil, emzik lazım!",
+        "Hadi ama, bu kadar zor olmamalı!"
+    ];
+
+    function isinla() {
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 100);
+        btn.style.position = 'fixed';
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
+    }
+
+    // Butonu ekranda vızır vızır kaydıran fonksiyon
+    function suruklen() {
+        if(mod === "kayma") {
+            isinla();
+        }
+    }
+
+    function tikla() {
+        if (mod === "normal") {
+            if (sira < asagilayiciYazilar.length) {
+                mesaj.innerText = asagilayiciYazilar[sira];
+                isinla();
+                sira++;
+            } else {
+                // BU BİR HATAYDI - KAYMA MODU BAŞLIYOR
+                mod = "kayma";
+                document.body.classList.add('scary-bg');
+                mesaj.innerText = "BU BİR HATAYDI... ŞİMDİ YAKALA BAKALIM!";
+                mesaj.style.color = "red";
+                btn.innerText = "YAKALA";
+                btn.style.background = "red";
+                btn.style.boxShadow = "0 0 20px red";
+                hareketInterval = setInterval(suruklen, 500); // 0.5 saniyede bir kendi kendine kayar
+            }
+        } 
+        else if (mod === "kayma") {
+            basariliBasma++;
+            if (basariliBasma < 3) {
+                mesaj.innerText = "ŞANSA BASTIN! " + basariliBasma + "/3 oldu...";
+                isinla();
+            } else {
+                // 3 KERE BASMAYI BAŞARDI
+                clearInterval(hareketInterval);
+                mod = "son";
+                document.body.classList.remove('scary-bg');
+                mesaj.innerText = "BAŞARDIN İŞTE! ÖDÜLÜN İÇİN SON KEZ BAS!";
+                mesaj.style.color = "#00f2ff";
+                btn.style.position = "relative";
+                btn.style.left = "0";
+                btn.style.top = "0";
+                btn.innerText = "ÖDÜLÜ AL";
+                btn.style.background = "#00f2ff";
+                btn.style.color = "#000";
+            }
+        } 
+        else {
+            // FİNAL
+            document.getElementById('box').style.display = 'none';
+            document.getElementById('final').style.display = 'block';
+            let e = "";
+            for(let i=0; i<1200; i++) { e += "🖕🏿"; }
+            document.getElementById('emoji-wall').innerText = e;
+        }
+    }
+
+</script>
+
+</body>
+  </html>
+  
